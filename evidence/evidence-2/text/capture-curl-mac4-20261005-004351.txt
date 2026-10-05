@@ -1,0 +1,11 @@
+[2m$ curl -sS --noproxy * --tls-max 1.2 -D - -o /dev/null -w client %{local_ip}:%{local_port} -> server %{remote_ip}:%{remote_port}\n https://app.teamx.test/api/status[0m
+HTTP/2 200 
+server: nginx
+date: Sun, 04 Oct 2026 19:14:03 GMT
+content-type: application/json
+content-length: 276
+x-backend: B
+cache-control: no-store
+x-edge: mac2-nginx
+
+client 10.7.23.23:58253 -> server 10.7.25.181:443

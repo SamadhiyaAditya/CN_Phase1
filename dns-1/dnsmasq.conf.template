@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# dnsmasq config for Mac 1  -  {{TEAM_NAME}} private DNS for {{DOMAIN}}
+# GENERATED from dns/dnsmasq.conf.template by scripts/dns.sh - edit the
+# template + team.env, not this file.
+# ---------------------------------------------------------------------------
+
+# Listen on UDP/TCP 53 on the LAN address (so other Macs can query us) and on
+# loopback (so Mac 1 itself can use it).
+port=53
+listen-address={{MAC1_IP}},127.0.0.1
+bind-interfaces
+
+# Do not read /etc/resolv.conf or /etc/hosts - every answer below is explicit.
+no-resolv
+no-hosts
+
+# Anything that is NOT our domain is forwarded upstream, so clients that use
+# Mac 1 as their only DNS server still have normal internet.
+server={{UPSTREAM_DNS}}
+domain-needed
+bogus-priv
+
+# We are authoritative for *.{{DOMAIN}}: names we don't define get NXDOMAIN
+# here instead of being leaked to the upstream resolver.
+local=/{{DOMAIN}}/
+
+# ---- the project records (Task B) ----------------------------------------
+# Both service names point at the EDGE (Mac 2), never at a backend.
+host-record=app.{{DOMAIN}},{{APP_IP}}
+host-record=api.{{DOMAIN}},{{APP_IP}}
+
+# Convenience names for each machine (handy for ping / ssh)
+host-record=mac1.{{DOMAIN}},{{MAC1_IP}}
+host-record=mac2.{{DOMAIN}},{{MAC2_IP}}
+host-record=mac3.{{DOMAIN}},{{MAC3_IP}}
+host-record=mac4.{{DOMAIN}},{{MAC4_IP}}
+
+# TTL handed out with our own records - shows up in the dig ANSWER section.
+local-ttl={{DNS_TTL}}
+
+# Log every query so we can show "query from <client>" during the demo.
+log-queries
+log-facility={{RUNTIME}}/dnsmasq.log
+pid-file={{RUNTIME}}/dnsmasq.pid
+user={{RUN_USER}}
+group={{RUN_GROUP}}

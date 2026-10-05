@@ -1,0 +1,21 @@
+# Inventory - Yashs-MacBook-Pro-10 - Mac 1 - DNS + client
+collected: Sun Oct  4 22:59:52 IST 2026
+
+Hostname           Yashs-MacBook-Pro-10.local
+Role               Mac 1 - DNS + client
+Interface          en0 (Wi-Fi)
+IPv4 address       10.7.26.168
+Subnet mask        255.255.224.0 (/19)
+Default gateway    10.7.0.1
+MAC address        ce:fb:cd:24:3f:5b
+DNS servers        There aren't any DNS Servers set on Wi-Fi. 
+
+## raw: interface
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=6460<TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>
+	ether ce:fb:cd:24:3f:5b
+	inet6 fe80::14d4:e946:96b7:3bbb%en0 prefixlen 64 secured scopeid 0xe 
+	inet 10.7.26.168 netmask 0xffffe000 broadcast 10.7.31.255
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active

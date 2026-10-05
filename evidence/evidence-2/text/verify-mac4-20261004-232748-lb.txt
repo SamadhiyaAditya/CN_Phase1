@@ -1,0 +1,14 @@
+# verify.sh on mac4 - Sun Oct  4 23:27:48 IST 2026 - URL https://app.teamx.test
+
+[1m================ D. Load balancing - 10 requests to the same name ================[0m
+request  1 -> X-Backend: A
+request  2 -> X-Backend: A
+request  3 -> X-Backend: A
+request  4 -> X-Backend: A
+request  5 -> X-Backend: A
+request  6 -> X-Backend: A
+request  7 -> X-Backend: A
+request  8 -> X-Backend: A
+request  9 -> X-Backend: A
+request 10 -> X-Backend: A
+summary: A=10  B=0  (round robin => roughly half each)

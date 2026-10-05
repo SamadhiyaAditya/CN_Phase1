@@ -1,0 +1,12 @@
+# F5-wrong-port - on mac4 - Mon Oct  5 02:11:42 IST 2026
+[1m==> F5  Wrong destination port on the client[0m
+--- ping 10.7.25.181  (host is up)
+    round-trip min/avg/max/stddev = 10.904/60.462/110.021/49.559 ms
+--- TCP to the RIGHT port 443
+    nc: getaddrinfo: nodename nor servname provided, or not known
+--- TCP to the WRONG port 444
+    nc: getaddrinfo: nodename nor servname provided, or not known
+--- curl https://app.teamx.test:444/
+    curl: (7) Failed to connect to app.teamx.test port 444 after 1020 ms: Couldn't connect to server
+WHY: same IP, same host - but nothing listens on :444, so the OS answers the SYN with a
+     RST ('connection refused'). IP picks the machine, the port picks the program.

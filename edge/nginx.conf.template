@@ -1,0 +1,92 @@
+# ---------------------------------------------------------------------------
+# nginx config for Mac 2  -  edge reverse proxy + load balancer + TLS
+# {{TEAM_NAME}}  ({{DOMAIN}})
+# GENERATED from edge/nginx.conf.template by scripts/edge.sh - edit the
+# template + team.env, not this file.
+# ---------------------------------------------------------------------------
+
+user {{RUN_USER}} {{RUN_GROUP}};
+worker_processes 1;
+pid {{RUNTIME}}/nginx.pid;
+error_log {{RUNTIME}}/logs/nginx-error.log info;
+
+events { worker_connections 256; }
+
+http {
+    default_type application/octet-stream;
+    server_tokens off;
+
+    # One line per request: who connected (ip:ephemeral port), which of our
+    # sockets they hit, TLS version/cipher, and which BACKEND nginx picked.
+    log_format edge '$time_local $remote_addr:$remote_port -> $server_addr:$server_port '
+                    '"$request" $status host=$host proto=$server_protocol '
+                    'tls=$ssl_protocol/$ssl_cipher upstream=$upstream_addr '
+                    'upstream_status=$upstream_status rt=$request_time';
+    access_log {{RUNTIME}}/logs/nginx-access.log edge;
+
+    client_body_temp_path {{RUNTIME}}/tmp/body;
+    proxy_temp_path       {{RUNTIME}}/tmp/proxy;
+    fastcgi_temp_path     {{RUNTIME}}/tmp/fastcgi;
+    uwsgi_temp_path       {{RUNTIME}}/tmp/uwsgi;
+    scgi_temp_path        {{RUNTIME}}/tmp/scgi;
+
+    # ---- Task D: the backend pool --------------------------------------
+    # Default algorithm = round robin: request 1 -> A, request 2 -> B, ...
+    # max_fails/fail_timeout = passive health check: if a backend refuses a
+    # connection it is skipped for 10 s, so traffic flows to the healthy one.
+    upstream app_backends {
+        server {{MAC3_IP}}:{{BACKEND_A_PORT}} max_fails=1 fail_timeout=10s;   # Backend A (Mac 3)
+        server {{MAC4_IP}}:{{BACKEND_B_PORT}} max_fails=1 fail_timeout=10s;   # Backend B (Mac 4)
+        keepalive 16;
+    }
+
+    # ---- plain HTTP: redirect to HTTPS + hand out the team CA certificate --
+    server {
+        listen {{HTTP_PORT}};
+        server_name app.{{DOMAIN}} api.{{DOMAIN}};
+
+        # Clients download the CA once (then verify its fingerprint!) and add
+        # it to their trust store. Public cert only - the key never leaves Mac 2.
+        location = /ca.crt {
+            alias {{TLS_DIR}}/ca.crt;
+            default_type application/x-x509-ca-cert;
+        }
+        location / {
+            return 301 https://$host{{HTTPS_SUFFIX}}$request_uri;
+        }
+    }
+
+    # ---- Task E: HTTPS, TLS terminated here -----------------------------
+    server {
+        {{LISTEN_HTTPS}}
+        server_name app.{{DOMAIN}} api.{{DOMAIN}};
+
+        ssl_certificate     {{TLS_DIR}}/server-chain.crt;
+        ssl_certificate_key {{TLS_DIR}}/server.key;
+        ssl_protocols       TLSv1.2 TLSv1.3;
+        ssl_session_cache   shared:SSL:1m;
+
+        add_header X-Edge "mac2-nginx" always;
+
+        # Browsers fetch /favicon.ico with every page. Answer it here so it
+        # doesn't use up a round-robin turn (otherwise page loads would always
+        # land on the same backend and the browser would never alternate A/B).
+        location = /favicon.ico { access_log off; return 204; }
+
+        location / {
+            proxy_pass http://app_backends;      # TLS ends here; backend leg is plain HTTP
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+            proxy_set_header Host              $host;
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+
+            # Fail fast and retry the other backend (failure demo: one backend down)
+            proxy_connect_timeout 2s;
+            proxy_read_timeout    5s;
+            proxy_next_upstream   error timeout http_502 http_503 http_504;
+            proxy_next_upstream_tries 2;
+        }
+    }
+}

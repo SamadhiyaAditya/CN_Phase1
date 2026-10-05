@@ -1,0 +1,35 @@
+# verify.sh on mac4 - Mon Oct  5 00:39:04 IST 2026 - URL https://app.teamx.test
+
+[1m================ F. HTTP caching - Cache-Control + ETag + 304 ================[0m
+--- 1) full request: server sends the body + caching headers
+[2m$ curl -sS -I --noproxy * https://app.teamx.test/api/info[0m
+HTTP/2 200 
+server: nginx
+date: Sun, 04 Oct 2026 19:09:04 GMT
+content-type: application/json
+content-length: 186
+x-backend: A
+cache-control: public, max-age=60
+etag: "8e637a1a8a261c8e"
+x-edge: mac2-nginx
+
+--- 2) conditional request: 'I already have version "8e637a1a8a261c8e" - has it changed?'
+[2m$ curl -sS -I --noproxy * -H If-None-Match: "8e637a1a8a261c8e" https://app.teamx.test/api/info[0m
+HTTP/2 304 
+server: nginx
+date: Sun, 04 Oct 2026 19:09:04 GMT
+content-length: 0
+x-backend: A
+cache-control: public, max-age=60
+etag: "8e637a1a8a261c8e"
+x-edge: mac2-nginx
+
+--- 3) same conditional request again (probably the OTHER backend this time):
+HTTP/2 304 
+x-backend: B
+etag: "8e637a1a8a261c8e"
+=> 304 Not Modified + no body. Both backends hash the same content, so either can say 304.
+--- 4) /api/status is live data, so it is marked no-store:
+HTTP/2 200 
+x-backend: A
+cache-control: no-store

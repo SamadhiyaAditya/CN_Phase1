@@ -1,0 +1,12 @@
+# F3-one-backend-down - on mac4 - Mon Oct  5 02:04:38 IST 2026
+[1m==> F3  One backend stopped[0m
+
+[33m>>> On Mac 2 (Person 2) stop Backend A   (Ctrl+C in its window, or scripts/backend.sh stop A)[0m
+    press Enter when done... request 1 -> HTTP/2 200   X-Backend: B
+request 2 -> HTTP/2 200   X-Backend: B
+request 3 -> HTTP/2 200   X-Backend: B
+request 4 -> HTTP/2 200   X-Backend: B
+request 5 -> HTTP/2 200   X-Backend: B
+request 6 -> HTTP/2 200   X-Backend: B
+WHY: nginx gets 'connection refused' from A, retries on B (proxy_next_upstream) and marks A
+     down for fail_timeout=10s. The client never notices - every request is 200 from B.

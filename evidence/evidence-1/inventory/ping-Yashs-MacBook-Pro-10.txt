@@ -1,0 +1,16 @@
+# Ping matrix from Yashs-MacBook-Pro-10 - Sun Oct  4 23:05:46 IST 2026
+
+## Mac1-DNS (10.7.26.168)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.456/0.564/0.625/0.077 ms
+RESULT: Mac1-DNS reachable
+
+## Mac2-Edge+Mac3-BackendA (10.7.25.181)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 9.675/32.486/65.316/23.794 ms
+RESULT: Mac2-Edge+Mac3-BackendA reachable
+
+## Mac4-BackendB (10.7.23.23)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 28.602/51.816/89.810/27.085 ms
+RESULT: Mac4-BackendB reachable

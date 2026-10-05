@@ -1,0 +1,32 @@
+# F1-wrong-dns-server - on mac4 - Mon Oct  5 01:34:03 IST 2026
+[1m==> F1  Wrong DNS server configured on this client[0m
+Before:
+--- DNS:     dig +short app.teamx.test
+    10.7.25.181
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 80.529/122.144/163.758/41.615 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+    curl: (28) Connection timed out after 6001 milliseconds
+        HTTP 000  X-remote=:0
+
+After pointing DNS at 10.7.23.23 (a machine with no DNS server):
+--- DNS:     dig +short app.teamx.test
+    ;; connection timed out; no servers could be reached
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 389.570/431.702/473.835/42.132 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+    curl: (28) Resolving timed out after 6005 milliseconds
+        HTTP 000  X-remote=:0
+
+But the edge is still reachable by IP over TCP 443:
+    nc: getaddrinfo: nodename nor servname provided, or not known
+
+Restored DNS -> 10.7.26.168:
+--- DNS:     dig +short app.teamx.test
+    10.7.25.181
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 784.271/824.178/864.086/39.908 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+    curl: (28) Connection timed out after 6006 milliseconds
+        HTTP 000  X-remote=:0
+WHY: name lookup fails, IP connectivity is fine -> DNS and IP are independent layers.

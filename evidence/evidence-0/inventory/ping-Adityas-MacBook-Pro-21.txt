@@ -1,0 +1,16 @@
+# Ping matrix from Adityas-MacBook-Pro-21 - Sun Oct  4 22:59:51 IST 2026
+
+## Mac1-DNS (10.7.26.168)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 7.708/67.434/108.207/43.162 ms
+RESULT: Mac1-DNS reachable
+
+## Mac2-Edge+Mac3-BackendA (10.7.25.181)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.939/1.410/1.723/0.339 ms
+RESULT: Mac2-Edge+Mac3-BackendA reachable
+
+## Mac4-BackendB (10.7.23.23)
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 6.814/45.273/110.195/46.167 ms
+RESULT: Mac4-BackendB reachable

@@ -1,0 +1,21 @@
+# Inventory - Adityas-MacBook-Pro-21 - Mac 2 - Edge + Backend A
+collected: Sun Oct  4 22:59:10 IST 2026
+
+Hostname           Adityas-MacBook-Pro-21.local
+Role               Mac 2 - Edge + Backend A
+Interface          en0 (Wi-Fi)
+IPv4 address       10.7.25.181
+Subnet mask        255.255.224.0 (/19)
+Default gateway    10.7.0.1
+MAC address        92:ef:45:8e:e9:ee
+DNS servers        There aren't any DNS Servers set on Wi-Fi. 
+
+## raw: interface
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=6460<TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>
+	ether 92:ef:45:8e:e9:ee
+	inet6 fe80::1c13:517e:3b83:a3cf%en0 prefixlen 64 secured scopeid 0xb 
+	inet 10.7.25.181 netmask 0xffffe000 broadcast 10.7.31.255
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active

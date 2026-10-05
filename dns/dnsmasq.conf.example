@@ -1,0 +1,46 @@
+# ---------------------------------------------------------------------------
+# dnsmasq config for Mac 1  -  teamX private DNS for teamx.test
+# GENERATED from dns/dnsmasq.conf.template by scripts/dns.sh - edit the
+# template + team.env, not this file.
+# ---------------------------------------------------------------------------
+
+# Listen on UDP/TCP 53 on the LAN address (so other Macs can query us) and on
+# loopback (so Mac 1 itself can use it).
+port=53
+listen-address=10.7.26.168,127.0.0.1
+bind-interfaces
+
+# Do not read /etc/resolv.conf or /etc/hosts - every answer below is explicit.
+no-resolv
+no-hosts
+
+# Anything that is NOT our domain is forwarded upstream, so clients that use
+# Mac 1 as their only DNS server still have normal internet.
+server=8.8.8.8
+domain-needed
+bogus-priv
+
+# We are authoritative for *.teamx.test: names we don't define get NXDOMAIN
+# here instead of being leaked to the upstream resolver.
+local=/teamx.test/
+
+# ---- the project records (Task B) ----------------------------------------
+# Both service names point at the EDGE (Mac 2), never at a backend.
+host-record=app.teamx.test,10.7.25.181
+host-record=api.teamx.test,10.7.25.181
+
+# Convenience names for each machine (handy for ping / ssh)
+host-record=mac1.teamx.test,10.7.26.168
+host-record=mac2.teamx.test,10.7.25.181
+host-record=mac3.teamx.test,10.7.25.181
+host-record=mac4.teamx.test,10.7.23.23
+
+# TTL handed out with our own records - shows up in the dig ANSWER section.
+local-ttl=60
+
+# Log every query so we can show "query from <client>" during the demo.
+log-queries
+log-facility=/Users/raj/Downloads/cn-phase1/runtime/dnsmasq.log
+pid-file=/Users/raj/Downloads/cn-phase1/runtime/dnsmasq.pid
+user=raj
+group=staff

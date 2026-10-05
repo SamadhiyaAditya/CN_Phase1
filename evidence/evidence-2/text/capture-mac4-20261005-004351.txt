@@ -1,0 +1,60 @@
+# Capture on mac4 (en0) - Mon Oct  5 00:44:05 IST 2026
+# filter: (udp port 53 and host 10.7.26.168) or (tcp port 443 and host 10.7.25.181 )
+
+## Every packet (tcpdump -nn -S: numeric ports, absolute seq/ack numbers)
+00:44:01.291922 IP 10.7.26.168.53 > 10.7.23.23.58133: 14346 NXDomain 0/0/0 (55)
+00:44:01.293547 IP 10.7.26.168.53 > 10.7.23.23.62407: 63090 NXDomain 0/0/0 (59)
+00:44:01.294809 IP 10.7.26.168.53 > 10.7.23.23.63527: 54955 NXDomain 0/0/0 (58)
+00:44:03.230432 IP 10.7.23.23.52915 > 10.7.26.168.53: 39102+ A? app.teamx.test. (32)
+00:44:03.247258 IP 10.7.26.168.53 > 10.7.23.23.52915: 39102* 1/0/0 A 10.7.25.181 (48)
+00:44:03.249941 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [SEW], seq 332261869, win 65535, options [mss 1460,nop,wscale 6,nop,nop,TS val 2084619120 ecr 0,sackOK,eol], length 0
+00:44:03.308579 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [S.E], seq 2867521237, ack 332261870, win 65535, options [mss 1460,nop,wscale 6,nop,nop,TS val 1118810080 ecr 2084619120,sackOK,eol], length 0
+00:44:03.308757 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [.], ack 2867521238, win 2059, options [nop,nop,TS val 2084619178 ecr 1118810080], length 0
+00:44:03.310736 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [P.], seq 332261870:332262095, ack 2867521238, win 2059, options [nop,nop,TS val 2084619181 ecr 1118810080], length 225
+00:44:03.315690 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332261870, win 2059, options [nop,nop,TS val 1118810087 ecr 2084619178], length 0
+00:44:03.315692 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332262095, win 2056, options [nop,nop,TS val 1118810089 ecr 2084619181], length 0
+00:44:03.323168 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], seq 2867521238:2867522686, ack 332262095, win 2056, options [nop,nop,TS val 1118810095 ecr 2084619181], length 1448
+00:44:03.323170 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [P.], seq 2867522686:2867523405, ack 332262095, win 2056, options [nop,nop,TS val 1118810095 ecr 2084619181], length 719
+00:44:03.323248 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [.], ack 2867523405, win 2026, options [nop,nop,TS val 2084619193 ecr 1118810095], length 0
+00:44:03.331992 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [P.], seq 332262095:332262188, ack 2867523405, win 2048, options [nop,nop,TS val 2084619202 ecr 1118810095], length 93
+00:44:03.337169 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332262188, win 2055, options [nop,nop,TS val 1118810110 ecr 2084619202], length 0
+00:44:03.347586 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [P.], seq 2867523405:2867523456, ack 332262188, win 2055, options [nop,nop,TS val 1118810111 ecr 2084619202], length 51
+00:44:03.347588 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [P.], seq 2867523456:2867523525, ack 332262188, win 2055, options [nop,nop,TS val 1118810111 ecr 2084619202], length 69
+00:44:03.347705 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [.], ack 2867523525, win 2047, options [nop,nop,TS val 2084619217 ecr 1118810111], length 0
+00:44:03.348066 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [P.], seq 332262188:332262290, ack 2867523525, win 2048, options [nop,nop,TS val 2084619218 ecr 1118810111], length 102
+00:44:03.348110 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [P.], seq 332262290:332262367, ack 2867523525, win 2048, options [nop,nop,TS val 2084619218 ecr 1118810111], length 77
+00:44:03.357705 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332262367, win 2053, options [nop,nop,TS val 1118810131 ecr 2084619218], length 0
+00:44:03.361073 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [P.], seq 2867523525:2867523563, ack 332262367, win 2053, options [nop,nop,TS val 1118810134 ecr 2084619218], length 38
+00:44:03.361178 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [.], ack 2867523563, win 2048, options [nop,nop,TS val 2084619231 ecr 1118810134], length 0
+00:44:03.417087 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [P.], seq 2867523563:2867523980, ack 332262367, win 2053, options [nop,nop,TS val 1118810188 ecr 2084619231], length 417
+00:44:03.417232 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [.], ack 2867523980, win 2042, options [nop,nop,TS val 2084619287 ecr 1118810188], length 0
+00:44:03.418054 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [P.], seq 332262367:332262398, ack 2867523980, win 2048, options [nop,nop,TS val 2084619288 ecr 1118810188], length 31
+00:44:03.419138 IP 10.7.23.23.58253 > 10.7.25.181.443: Flags [F.], seq 332262398, ack 2867523980, win 2048, options [nop,nop,TS val 2084619289 ecr 1118810188], length 0
+00:44:03.429621 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332262398, win 2053, options [nop,nop,TS val 1118810196 ecr 2084619288], length 0
+00:44:03.432974 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [.], ack 332262399, win 2053, options [nop,nop,TS val 1118810196 ecr 2084619289], length 0
+00:44:03.432976 IP 10.7.25.181.443 > 10.7.23.23.58253: Flags [R.], seq 2867523980, ack 332262399, win 2053, length 0
+
+## DNS query/response
+1	10.7.26.168	53	10.7.23.23	58133	lb._dns-sd._udp.0.0.7.10.in-addr.arpa		
+2	10.7.26.168	53	10.7.23.23	62407	lb._dns-sd._udp.0.177.107.10.in-addr.arpa		
+3	10.7.26.168	53	10.7.23.23	63527	lb._dns-sd._udp.0.2.168.192.in-addr.arpa		
+4	10.7.23.23	52915	10.7.26.168	53	app.teamx.test		
+5	10.7.26.168	53	10.7.23.23	52915	app.teamx.test	10.7.25.181	60
+
+## TCP three-way handshake (SYN / SYN-ACK / ACK) with relative seq/ack
+6	10.7.23.23	58253	10.7.25.181	443	····CE····S·	0	0
+7	10.7.25.181	443	10.7.23.23	58253	·····E·A··S·	0	1
+8	10.7.23.23	58253	10.7.25.181	443	·······A····	1	1
+10	10.7.25.181	443	10.7.23.23	58253	·······A····	1	1
+
+## TLS handshake messages
+9	10.7.23.23	Client Hello (SNI=app.teamx.test)
+12	10.7.25.181	Server Hello
+13	10.7.25.181	Certificate, Server Key Exchange, Server Hello Done
+15	10.7.23.23	Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message
+17	10.7.25.181	Change Cipher Spec, Encrypted Handshake Message
+18	10.7.25.181	Application Data
+20	10.7.23.23	Application Data
+21	10.7.23.23	Application Data
+23	10.7.25.181	Application Data
+25	10.7.25.181	Application Data

@@ -1,0 +1,27 @@
+# F4-both-backends-down - on mac4 - Mon Oct  5 02:06:46 IST 2026
+[1m==> F4  Both backends stopped[0m
+
+[33m>>> On Mac 3 (Person 3) stop Backend B too   (Ctrl+C in its window; Backend A stays stopped)[0m
+    press Enter when done... --- DNS:     dig +short app.teamx.test
+    10.7.25.181
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 10.069/24.200/38.331/14.131 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+        HTTP 502  X-remote=10.7.25.181:443
+--- verbose: TLS works, the error comes from nginx itself
+    * SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+    *  subject: CN=app.teamx.test; O=teamX
+    *  SSL certificate verify ok.
+    < HTTP/2 502 
+    <center><h1>502 Bad Gateway</h1></center>
+WHY: DNS ok, TCP ok, TLS ok (handled by the edge) - only the upstream is gone, so nginx
+     answers 502 Bad Gateway. That is exactly where the edge ends and the backend begins.
+
+[33m>>> Start both backends again (Mac 2 (Person 2): scripts/backend.sh run A, Mac 3 (Person 3): scripts/backend.sh run B)[0m
+    press Enter when done...     waiting 10 s - nginx keeps a failed backend out of the pool for fail_timeout=10s
+--- DNS:     dig +short app.teamx.test
+    10.7.25.181
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 16.033/18.075/20.117/2.042 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+        HTTP 200  X-remote=10.7.25.181:443

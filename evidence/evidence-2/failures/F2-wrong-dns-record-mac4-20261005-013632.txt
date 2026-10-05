@@ -1,0 +1,26 @@
+# F2-wrong-dns-record - on mac4 - Mon Oct  5 01:36:32 IST 2026
+[1m==> F2  DNS record points to a wrong IP[0m
+
+[33m>>> On Mac 1 (Person 1) run:   scripts/dns.sh wrong-record      (app.teamx.test -> 10.7.23.23)[0m
+    press Enter when done... --- DNS:     dig +short app.teamx.test
+    10.7.23.23
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 92.378/133.939/175.499/41.560 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+    curl: (7) Failed to connect to app.teamx.test port 443 after 23 ms: Couldn't connect to server
+        HTTP 000  X-remote=:0
+--- verbose: where does curl actually go?
+    *   Trying 10.7.23.23:443...
+    * connect to 10.7.23.23 port 443 from 10.7.23.23 port 54900 failed: Connection refused
+    * Failed to connect to app.teamx.test port 443 after 3 ms: Couldn't connect to server
+WHY: resolution SUCCEEDS, but returns 10.7.23.23, which has nothing on :443.
+     DNS is just a directory - it hands out an address, it does not make a connection.
+
+[33m>>> On Mac 1 (Person 1) run:   scripts/dns.sh fix[0m
+    press Enter when done... --- DNS:     dig +short app.teamx.test
+    10.7.25.181
+--- IP:      ping -c 2 10.7.25.181   (the edge, by address)
+    round-trip min/avg/max/stddev = 334.680/427.577/520.474/92.897 ms
+--- SERVICE: curl https://app.teamx.test/api/status
+    curl: (28) Connection timed out after 6006 milliseconds
+        HTTP 000  X-remote=:0

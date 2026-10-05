@@ -1,0 +1,22 @@
+# Inventory - Yashs-MacBook-Pro-666 - Mac 3 - Backend B + client
+collected: Sun Oct  4 22:59:49 IST 2026
+
+Hostname           Yashs-MacBook-Pro-666.local
+Role               Mac 3 - Backend B + client
+Interface          en0 (Wi-Fi)
+IPv4 address       10.7.23.23
+Subnet mask        255.255.255.0 (/24)
+Default gateway    10.7.0.1
+MAC address        5a:a7:58:2e:bc:1e
+DNS servers        There aren't any DNS Servers set on Wi-Fi. 
+
+## raw: interface
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=6460<TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>
+	ether 5a:a7:58:2e:bc:1e
+	inet 10.107.177.50 netmask 0xffffff00 broadcast 10.107.177.255
+	inet6 fe80::852:c56d:1727:1d4%en0 prefixlen 64 secured scopeid 0xb 
+	inet 10.7.23.23 netmask 0xffffe000 broadcast 10.7.31.255
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active
