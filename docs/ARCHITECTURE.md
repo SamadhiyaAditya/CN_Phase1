@@ -6,29 +6,29 @@
 
 | PDF role | Runs on | Address |
 |---|---|---|
-| Mac 1: DNS server + test client | Mac 1 (`<Person 1>`) | `<IP1>`:53 |
-| Mac 2: Edge (nginx, TLS, load balancer) | Mac 2 (`<Person 2>`) | `<IP2>`:80/443 |
-| Mac 3: Backend A | Mac 2 (`<Person 2>`) | `<IP2>`:3001 |
-| Mac 4: Backend B + test client | Mac 3 (`<Person 3>`) | `<IP3>`:3002 |
+| Mac 1: DNS server + test client | Mac 1 (Yash Raj) | 10.7.26.168:53 |
+| Mac 2: Edge (nginx, TLS, load balancer) | Mac 2 (Yash Yadav) | 10.7.25.181:80/443 |
+| Mac 3: Backend A | Mac 2 (Yash Yadav) | 10.7.25.181:3001 |
+| Mac 4: Backend B + test client | Mac 3 (Aditya Samadhiya) | 10.7.23.23:3002 |
 
-All three Macs are on the same Wi-Fi subnet `<subnet>` with the same default gateway `<gateway>`. No routing between subnets, no NAT between our machines, no cloud. Backend B sits on a different Mac from the edge, so load balancing really crosses the network.
+All three Macs are on the same Wi-Fi subnet 255.255.224.0 with the same default gateway 10.7.0.1. No routing between subnets, no NAT between our machines, no cloud. Backend B sits on a different Mac from the edge, so load balancing really crosses the network.
 
 ```mermaid
 flowchart LR
-  subgraph LAN["Wi-Fi <subnet> (one broadcast domain)"]
-    subgraph M1["Mac 1 <IP1>"]
+  subgraph LAN["Wi-Fi 255.255.224.0 (one broadcast domain)"]
+    subgraph M1["Mac 1 10.7.26.168"]
       DNS["dnsmasq :53"]
       C1["client"]
     end
-    subgraph M2["Mac 2 <IP2>"]
+    subgraph M2["Mac 2 10.7.25.181"]
       EDGE["nginx :80/:443<br/>TLS + load balancer"]
       A["Backend A :3001"]
     end
-    subgraph M3["Mac 3 <IP3>"]
+    subgraph M3["Mac 3 10.7.23.23"]
       C3["client: browser, curl, Wireshark"]
       B["Backend B :3002"]
     end
-    GW(("Wi-Fi router<br/><gateway>"))
+    GW(("Wi-Fi router<br/>10.7.0.1"))
   end
   M1 --- GW
   M2 --- GW
@@ -46,15 +46,15 @@ Fill in from `evidence/inventory/*.txt` (screenshots 01–06):
 
 | Machine | Hostname | Interface | IPv4 | Mask / prefix | Gateway | MAC address |
 |---|---|---|---|---|---|---|
-| Mac 1 (DNS + client) | | en0 (Wi-Fi) | | | | |
-| Mac 2 (edge + Backend A) | | en0 (Wi-Fi) | | | | |
-| Mac 3 (Backend B + client) | | en0 (Wi-Fi) | | | | |
+| Mac 1 (DNS + client) | Yashs-MacBook-Pro-10.local | en0 (Wi-Fi) | 10.7.26.168 | 255.255.224.0 (/19) | 10.7.0.1 | ce:fb:cd:24:3f:5b |
+| Mac 2 (edge + Backend A) | Adityas-MacBook-Pro-21.local | en0 (Wi-Fi) | 10.7.25.181 | 255.255.224.0 (/19) | 10.7.0.1 | 92:ef:45:8e:e9:ee |
+| Mac 3 (Backend B + client) | Yashs-MacBook-Pro-666.local | en0 (Wi-Fi) | 10.7.23.23 | 255.255.255.0 (/24) | 10.7.0.1 | 5a:a7:58:2e:bc:1e |
 
 ### Service map
 
 | Machine | Service | Listens on | Protocol | Who connects to it |
 |---|---|---|---|---|
-| Mac 1 | dnsmasq | `<IP1>:53`, `127.0.0.1:53` | DNS over UDP (TCP for big answers) | Every client |
+| Mac 1 | dnsmasq | 10.7.26.168:53, 127.0.0.1:53 | DNS over UDP (TCP for big answers) | Every client |
 | Mac 2 | nginx | `*:80` | HTTP, only redirects to HTTPS and serves `/ca.crt` | Clients |
 | Mac 2 | nginx | `*:443` | HTTPS (TLS 1.2/1.3, HTTP/1.1 + HTTP/2 via ALPN) | Clients |
 | Mac 2 | Backend A (`server.py`) | `0.0.0.0:3001` | Plain HTTP/1.1 | Only the edge |
@@ -64,17 +64,17 @@ Fill in from `evidence/inventory/*.txt` (screenshots 01–06):
 
 | Name | Type | Value | TTL |
 |---|---|---|---|
-| `app.<teamid>.test` | A | Mac 2 IP (edge) | 60 s |
-| `api.<teamid>.test` | A | Mac 2 IP (edge) | 60 s |
-| `mac1…mac4.<teamid>.test` | A | the IP of the Mac running that role | 60 s |
-| anything else under `<teamid>.test` | | NXDOMAIN (we are authoritative, `local=/<teamid>.test/`) | |
+| `app.teamx.test` | A | Mac 2 IP (edge) | 60 s |
+| `api.teamx.test` | A | Mac 2 IP (edge) | 60 s |
+| `mac1…mac4.teamx.test` | A | the IP of the Mac running that role | 60 s |
+| anything else under `teamx.test` | | NXDOMAIN (we are authoritative, `local=/teamx.test/`) | |
 | everything else | | forwarded to `8.8.8.8` | |
 
 Both service names point at the **edge**, never at a backend, so clients never need backend IPs.
 
 ## 3. Request flow, layer by layer
 
-What happens when the client on Mac 3 runs `curl https://app.<teamid>.test/api/status`:
+What happens when the client on Mac 3 runs `curl https://app.teamx.test/api/status`:
 
 ```mermaid
 sequenceDiagram
@@ -83,16 +83,16 @@ sequenceDiagram
   participant D as DNS (Mac 1 :53)
   participant E as Edge nginx (Mac 2 :443)
   participant A as Backend A (Mac 2 :3001)
-  C->>D: DNS query A? app.<teamid>.test   (UDP 50xxx → 53)
-  D-->>C: A = <Mac 2 IP>, TTL 60
+  C->>D: DNS query A? app.teamx.test   (UDP 50xxx → 53)
+  D-->>C: A = 10.7.25.181, TTL 60
   C->>E: TCP SYN          (ephemeral port → 443)
   E-->>C: TCP SYN-ACK
   C->>E: TCP ACK          (connection established)
-  C->>E: TLS ClientHello  (SNI=app.<teamid>.test, ALPN h2/http1.1)
+  C->>E: TLS ClientHello  (SNI=app.teamx.test, ALPN h2/http1.1)
   E-->>C: ServerHello + Certificate (signed by our CA) + key exchange
   C->>E: key exchange + ChangeCipherSpec + Finished
   E-->>C: ChangeCipherSpec + Finished   (from here on everything is encrypted)
-  C->>E: [encrypted] GET /api/status  Host: app.<teamid>.test
+  C->>E: [encrypted] GET /api/status  Host: app.teamx.test
   Note over E: TLS terminated. Round robin picks next backend
   E->>A: plain HTTP GET /api/status  + X-Forwarded-For, X-Real-IP  (TCP → 3001)
   A-->>E: 200 OK, X-Backend: A, JSON body
@@ -106,7 +106,7 @@ sequenceDiagram
 | Name → IP | 7 Application | Application | DNS | client ephemeral → **UDP 53** | Find *where* the service is |
 | Carry DNS | 4 Transport | Transport | UDP | | One question, one answer, no connection needed |
 | Reliable byte stream | 4 Transport | Transport | TCP | client ephemeral → **TCP 443** | 3-way handshake, sequence/ack numbers, retransmission |
-| Encryption + server identity | 5/6 Session/Presentation | (between Transport and Application) | TLS 1.2 / 1.3 | inside TCP 443 | Confidentiality, integrity, proving the server is really app.<teamid>.test |
+| Encryption + server identity | 5/6 Session/Presentation | (between Transport and Application) | TLS 1.2 / 1.3 | inside TCP 443 | Confidentiality, integrity, proving the server is really app.teamx.test |
 | The request itself | 7 Application | Application | HTTP/1.1 or HTTP/2 | | GET, headers, status codes, caching |
 | Getting between Macs | 3 Network | Internet | IPv4 | | Source/destination IP addresses on the same subnet |
 | On the Wi-Fi | 2 Data link | Link | 802.11 / Ethernet frames, ARP | | MAC addresses, the router delivers the frame |
@@ -132,4 +132,4 @@ Notice that **two separate TCP connections** carry each request: client to edge 
 - **TLS terminates at the edge.** The backends stay simple HTTP, and there's one place to manage certificates. The trade-off is that the edge→backend hop is plaintext on the LAN (fine for a private network; production would use mTLS or a private VPC).
 - **Same content = same ETag on both backends.** `/api/info` hashes identical bytes on A and B, so a conditional request gets a 304 no matter which backend the load balancer picks.
 - **Combining roles (3-Mac team):** Backend A shares Mac 2 with the edge. That's allowed by the PDF. DNS (Mac 1) and the edge (Mac 2) are each a single point of failure; Phase 2 adds a backup resolver and a standby edge.
-- **Backend A on the edge Mac:** nginx reaches it at <Mac 2 IP>:3001. That traffic never leaves the Mac (it goes over the loopback interface), while traffic to Backend B crosses the Wi-Fi. Round robin treats both the same.
+- **Backend A on the edge Mac:** nginx reaches it at 10.7.25.181:3001. That traffic never leaves the Mac (it goes over the loopback interface), while traffic to Backend B crosses the Wi-Fi. Round robin treats both the same.

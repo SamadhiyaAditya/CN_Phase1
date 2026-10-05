@@ -5,7 +5,7 @@
 A tiny **private certificate authority (CA)** of our own, plus one **server certificate** for `app.teamx.test` and `api.teamx.test` that the CA signed. nginx on the edge (Mac 2) presents that certificate. Every client Mac adds our CA to its trust store once. After that, the browser and curl accept the server **with full validation, and no `-k` anywhere**.
 
 ```
- teamX Local Root CA   (ca.crt / ca.key)      ← trusted by every client Mac
+ teamx Local Root CA   (ca.crt / ca.key)      ← trusted by every client Mac
           │ signs
           ▼
  app.teamx.test         (server.crt / server.key)  ← nginx sends this in the handshake
@@ -67,7 +67,7 @@ If a curl build doesn't read the keychain, our scripts pass `--cacert tls/out/ca
 4. Today's date is inside the validity period.
 5. The server proves it owns the matching **private key** by signing the handshake (CertificateVerify in TLS 1.3, ServerKeyExchange in TLS 1.2). Copying `server.crt` alone is useless without `server.key`.
 
-If you type the IP (`https://<Mac 2 IP>`), check 3 fails because the IP isn't in the SAN. That's one more reason the demo always uses the name.
+If you type the IP (`https://10.7.25.181`), check 3 fails because the IP isn't in the SAN. That's one more reason the demo always uses the name.
 
 ## The handshake (what we point at in Wireshark)
 
